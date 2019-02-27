@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<!-- 编写sql语句的配置文件，对应mapper接口 -->
+<mapper namespace="com.hxzy.dao.PhoneDao">
+
+	<!-- 当数据库中的表的列名和pojo的属性名不一致时，通过配置resultMap可以解决这个问题 -->
+	<!-- type:pojo的完整类名，id：在映射文件中的使用的标示 -->
+	<resultMap type="com.hxzy.entity.Phone" id="phoneResultMap">
+		<!-- 数据库中的主键列 -->
+		<!-- 
+			column:数据库中列名
+		 -->
+		<id column="p_id" property="pId"/>
+		<result column="p_name" property="pName"/>
+	</resultMap>
+	
+	<!-- 
+		resultType查询得到的结果集组装的对象的类型
+		
+		#{} 在获取传进来的参数时，如果是简单类型，#{参数名}随便写。
+			获取的参数为pojo时，#{对象的属性}   
+			Student{
+				Teacher teacher
+					id,name
+			}
+			
+			如果要获取学生对象的老师名字的属性 #{teacher.name}
+		resultMap和resultType在一条sql语句中不能同时出现。
+		
+		sql查询语句中，resultMap的属性值对应resultMap节点中的id属性值。
+	-->
+	<select id="queryOne" parameterType="java.lang.Integer" resultMap="phoneResultMap" >
+		select 
+			p_id,
+			p_name,
+			price,
+			os,
+			count,
+			date
+		from `phone` where `p_id` = #{value}
+	</select>
+</mapper>

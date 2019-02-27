@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<!-- 编写sql语句的配置文件，对应mapper接口 -->
+<mapper namespace="com.hxzy.dao.BrandDao">
+	<insert id="add" useGeneratedKeys="true" parameterType="com.hxzy.entity.Brand">
+		
+		<!-- 
+			将插入的主键返回到user对象中 
+			SELECT LAST_INSERT_ID()  :得到刚insert插入数据的主键值。只适用于主键自增长的列
+			keyProperty:将查询得到的主键设置到parameterType对象中哪个属性中
+			order: BEFORE，在执行插入前执行。  AFTER，在执行了插入后执行sql
+			resultType:指定返回的id的结果类型
+		-->
+		<selectKey keyProperty="brandId" order="AFTER" resultType="java.lang.Integer">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	
+		insert into `brands` (`brandName`) values(#{brandName})
+	</insert>
+	<update id="update" parameterType="com.hxzy.entity.Brand">
+		update `brands` set `brandName` = #{brandName} where `brandId` = #{brandId}
+	</update>
+	
+	<!-- 
+		parameterType映射的是java 的对象的类型。
+	-->
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from `brands` where `brandId` = #{id}
+	</delete>
+	
+	<!-- 
+		resultType查询得到的结果集组装的对象的类型
+		
+		#{} 在获取传进来的参数时，如果是简单类型，#{参数名}随便写。
+			获取的参数为pojo时，#{对象的属性}   
+			Student{
+				Teacher teacher
+					id,name
+			}
+			
+			如果要获取学生对象的老师名字的属性 #{teacher.name}
+			
+	-->
+	<select id="queryOne" parameterType="java.lang.Integer" resultType="com.hxzy.entity.Brand">
+		<!-- 
+			我这个地方将列名写为*的原因：数据库的列名和com.hxzy.entity.Brand中的属性名是相同的。
+		 -->
+		select 
+			`brandId` as brandId,
+			`brandName` as brandName
+		from `brands` where `brandId`= #{value}
+	</select>
+	
+	<select id="queryAll" resultType="com.hxzy.entity.Brand">
+		select 
+			`brandId` as brandId,
+			`brandName` as brandName
+		from `brands`
+	</select>
+</mapper>

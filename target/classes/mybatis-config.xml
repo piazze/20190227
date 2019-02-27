@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  <!-- mybatis全局配置 -->
+<configuration>
+  <!-- 通过resource属性指向外部的properties文件 -->
+  <properties resource="jdbc.properties"></properties>
+ 
+  <settings>
+  	<!-- 通过log4j打印mybatis执行的sql语句 -->
+  	<setting name="logImpl" value="LOG4J" />
+  </settings>
+	 
+  <!-- 用于设置环境 -->
+  <environments default="development">
+    <environment id="development">
+      <!-- 事务管理方式，通过JDBC的事务管理，管理我们的事务 -->
+      <transactionManager type="JDBC"/>
+      
+      <!-- 配置数据源 -->
+      <dataSource type="POOLED">
+        <property name="driver" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+      </dataSource>
+    </environment>
+  </environments>
+  
+  <!-- 配置mysql的映射文件 -->
+  <mappers>
+    <mapper resource="mapper/BrandMapper.xml"/>
+    <mapper resource="mapper/PhoneMapper.xml"/>
+  </mappers>
+</configuration>
