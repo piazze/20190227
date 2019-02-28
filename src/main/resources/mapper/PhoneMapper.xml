@@ -8,7 +8,7 @@
 
 	<!-- 当数据库中的表的列名和pojo的属性名不一致时，通过配置resultMap可以解决这个问题 -->
 	<!-- type:pojo的完整类名，id：在映射文件中的使用的标示 -->
-	<resultMap type="com.hxzy.entity.Phone" id="phoneResultMap">
+	<resultMap type="phone" id="phoneResultMap">
 		<!-- 数据库中的主键列 -->
 		<!-- 
 			column:数据库中列名
@@ -16,6 +16,32 @@
 		<id column="p_id" property="pId"/>
 		<result column="p_name" property="pName"/>
 	</resultMap>
+	
+	<!-- 提取重复的代码片段-->
+	<sql id="queryCondition">
+			<!-- 
+			如果品牌名字不为空，则条件
+			在if中表示并且： and 不能写&&
+				表示或者：or   不能写||
+			 -->
+			 <if test="brand != null">
+				 <if test="brand.brandName != null and brand.brandName != ''">
+					and brands.brandName = #{brand.brandName}
+				</if>
+			 </if>
+			 <if test="minPrice != null and minPrice != 0">
+			 	and price 
+			 		<![CDATA[ > ]]>
+			 	#{minPrice}
+			 </if>
+			 <if test="maxPrice != null and maxPrice != 0">
+			 	and price 
+			 		<![CDATA[ <= ]]>  <!-- 类似于java中的转义符，表中中的<=会原封不动的发送到数据库中 -->
+			 	#{maxPrice}
+			 </if>
+			 
+	</sql>
+	
 	
 	<!-- 
 		resultType查询得到的结果集组装的对象的类型
@@ -41,5 +67,41 @@
 			count,
 			date
 		from `phone` where `p_id` = #{value}
+	</select>
+	
+	<select id="queryByCondition" parameterType="phoneVo" resultMap="phoneResultMap">
+		select phone.* from `phone` phone
+		inner join `brands` brands 
+		on phone.brandId = brands.brandId
+		
+		<where>
+			<!-- 引用sql片段 -->
+			<include refid="queryCondition"></include>
+		</where>
+		
+		limit #{pageIndex},#{pageSize}
+	</select>
+	
+	<select id="queryByConditionCount"  parameterType="phoneVo" resultType="int">
+		select 
+			count(*)
+		from `phone` phone
+		inner join `brands` brands 
+		on phone.brandId = brands.brandId
+		
+		<where>
+			<!-- 引用sql片段 -->
+			<include refid="queryCondition"></include>
+		</where>
+	</select>
+	
+	<select id="queryByBound" parameterType="list"  resultMap="phoneResultMap">
+		select phone.* from `phone` phone
+		inner join `brands` brands 
+		on phone.brandId = brands.brandId
+		where phone.p_id in
+		<foreach collection="list" open="(" close=")" item="item" separator=",">
+			#{item}
+		</foreach>
 	</select>
 </mapper>
