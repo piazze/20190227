@@ -13,6 +13,7 @@ import com.hxzy.entity.Brand;
 public class BrandDaoImplTest {
 
 	@Test
+	@Ignore
 	public void testAdd() {
 		try {
 			BrandDao brandDao = new BrandDaoImpl();
@@ -67,7 +68,6 @@ public class BrandDaoImplTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testQueryAll() {
 		try {
 			BrandDao brandDao = new BrandDaoImpl();
